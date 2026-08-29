@@ -1,0 +1,40 @@
+﻿Reference,Value,Footprint,Description,LCSC,Assembly
+U1,TPS54302DDCR,SOT-23-6,5V/3A synchronous buck,C129704,SMT
+U2,DRV8833PWPR,HTSSOP-16-EP,Dual H-bridge for M1/M2,,SMT
+U3,DRV8833PWPR,HTSSOP-16-EP,Dual H-bridge for M3,,SMT
+U4,Seeed XIAO ESP32-C3,XIAO-2x7-P2.54,Base motion MCU,,HAND
+F1,5A resettable fuse,PTC-2920,Battery branch protection,,SMT
+D1,SMBJ10A,SMB,Battery transient suppressor,C83357,SMT
+L1,10uH 4A shielded,IND-7x7,5V buck output inductor,,SMT
+C1,22uF 16V X7R,C1210,Buck input capacitor,,SMT
+C2,100nF 25V X7R,C0805,Buck HF input bypass,,SMT
+C3,22uF 10V X7R,C1210,5V output capacitor,,SMT
+C4,22uF 10V X7R,C1210,5V output capacitor,,SMT
+C5,100nF 16V X7R,C0805,TPS54302 bootstrap capacitor,,SMT
+C6,75pF C0G,C0805,5V feedback feed-forward capacitor,,SMT
+C7,470uF 16V low-ESR,CP-RADIAL-D8,Motor/battery local bulk,,HAND
+C8,1000uF 10V low-ESR,CP-RADIAL-D10,Upper-body 5V surge bulk,,HAND
+C9,10uF 16V X7R,C1210,U2 VM local bypass,,SMT
+C10,2.2uF 10V X7R,C0805,U2 VINT bypass,,SMT
+C11,10nF 16V X7R,C0805,U2 VCP capacitor,,SMT
+C12,10uF 16V X7R,C1210,U3 VM local bypass,,SMT
+C13,2.2uF 10V X7R,C0805,U3 VINT bypass,,SMT
+C14,10nF 16V X7R,C0805,U3 VCP capacitor,,SMT
+C15,100nF 25V X7R,C0805,M1 EMI capacitor,,SMT
+C16,100nF 25V X7R,C0805,M2 EMI capacitor,,SMT
+C17,100nF 25V X7R,C0805,M3 EMI capacitor,,SMT
+R1,100k 1%,R0805,5V feedback upper resistor,,SMT
+R2,13.3k 1%,R0805,5V feedback lower resistor,,SMT
+R3,100k 1%,R0805,Buck enable upper resistor,,SMT
+R4,47k 1%,R0805,Buck enable lower resistor,,SMT
+R5,10k,R0805,DRV nSLEEP pull-up,,SMT
+R7,0.20R 1W 1%,R2512,"M1 current limit, about 1A",,SMT
+R8,0.20R 1W 1%,R2512,"M2 current limit, about 1A",,SMT
+R9,0.20R 1W 1%,R2512,"M3 current limit, about 1A",,SMT
+J1,BATTERY 2S,TERM-2P-P5.08,Protected 2S battery input,,HAND
+J2,POWER SWITCH,JST-XH-2P,External latching switch or jumper,,HAND
+J3,MOTOR 1,JST-XH-2P,N20 motor 1,,HAND
+J4,MOTOR 2,JST-XH-2P,N20 motor 2,,HAND
+J5,MOTOR 3,JST-XH-2P,N20 motor 3,,HAND
+J6,UPPER LINK,JST-XH-4P,5V/GND/TX/RX to current robot,,HAND
+J7,TOUCH,JST-XH-3P,3.3V/GND/touch signal,,HAND

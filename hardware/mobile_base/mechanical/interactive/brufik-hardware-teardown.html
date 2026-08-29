@@ -1,0 +1,1817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Brufik Hardware Exploded</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Brufik Hardware Exploded" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Brufik Hardware Exploded&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: var(--border-radius-lg, 12.5px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;brufik-true-3d&quot;&gt;
+  &lt;div class=&quot;b3-head&quot;&gt;
+    &lt;div&gt;
+      &lt;h2&gt;Brufik × N3 产品化三维拆解&lt;/h2&gt;
+      &lt;span class=&quot;b3-sub&quot;&gt;真实硬件包络 · 梯形腰舱 · 双舵机云台 · 三轮全向底盘&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;span class=&quot;viz-badge&quot;&gt;3D · mm&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;viz-controls b3-controls&quot;&gt;
+    &lt;label class=&quot;form-label b3-range&quot; for=&quot;b3-explode&quot;&gt;
+      拆解程度 &lt;span id=&quot;b3-explode-value&quot;&gt;0%&lt;/span&gt;
+      &lt;input id=&quot;b3-explode&quot; class=&quot;form-range&quot; type=&quot;range&quot; min=&quot;0&quot; max=&quot;100&quot; value=&quot;0&quot; step=&quot;1&quot;&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;b3-focus&quot;&gt;
+      聚焦组件
+      &lt;select id=&quot;b3-focus&quot; class=&quot;form-select&quot;&gt;
+        &lt;option value=&quot;&quot;&gt;整机&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-check form-switch&quot;&gt;
+      &lt;input id=&quot;b3-xray&quot; class=&quot;form-check-input&quot; type=&quot;checkbox&quot;&gt;
+      &lt;span class=&quot;form-check-label&quot;&gt;装配透视&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;label class=&quot;form-check form-switch&quot;&gt;
+      &lt;input id=&quot;b3-rotate&quot; class=&quot;form-check-input&quot; type=&quot;checkbox&quot;&gt;
+      &lt;span class=&quot;form-check-label&quot;&gt;自动旋转&lt;/span&gt;
+    &lt;/label&gt;
+    &lt;button id=&quot;b3-play&quot; class=&quot;btn btn-primary&quot; type=&quot;button&quot;&gt;自动拆解&lt;/button&gt;
+    &lt;button id=&quot;b3-reset&quot; class=&quot;btn btn-ghost&quot; type=&quot;button&quot;&gt;复位视角&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;b3-stage&quot; aria-label=&quot;可旋转缩放的 Brufik 三轮机器人三维爆炸模型&quot;&gt;
+    &lt;canvas id=&quot;b3-canvas&quot;&gt;&lt;/canvas&gt;
+    &lt;div id=&quot;b3-loading&quot; class=&quot;b3-loading&quot;&gt;正在装配三维模型…&lt;/div&gt;
+    &lt;div class=&quot;b3-hint&quot;&gt;拖动旋转 · 滚轮缩放 · 点击零件查看&lt;/div&gt;
+    &lt;div id=&quot;b3-detail&quot; class=&quot;b3-detail&quot; aria-live=&quot;polite&quot;&gt;
+      &lt;strong&gt;低重心直装&lt;/strong&gt;&lt;span&gt;取消过渡舱 · 74 × 66 mm 承力板直接连接 N3 顶板与第一版机身&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  #brufik-true-3d {
+    width: 100%;
+    color-scheme: light;
+    color: #16181d;
+    background: #ffffff;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, &quot;PingFang SC&quot;, sans-serif;
+  }
+  #brufik-true-3d .b3-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  #brufik-true-3d h2 { margin: 0 0 3px; font-weight: 500; }
+  #brufik-true-3d .b3-sub { color: #727782; }
+  #brufik-true-3d .b3-controls { margin-bottom: 10px; }
+  #brufik-true-3d .b3-range { flex: 1 1 310px; min-width: min(310px, 100%); }
+  #brufik-true-3d .b3-controls .form-label:has(select) { min-width: 190px; }
+  #brufik-true-3d .b3-stage {
+    position: relative;
+    width: 100%;
+    height: clamp(540px, 70vw, 760px);
+    min-height: 540px;
+    overflow: hidden;
+    border: 1px solid #e6e8ec;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 50% 34%, rgba(255,255,255,.98) 0 18%, rgba(247,249,252,.96) 58%, rgba(239,243,248,.98) 100%);
+  }
+  #brufik-true-3d #b3-canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+  #brufik-true-3d .b3-loading {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.9);
+    color: #555b66;
+    box-shadow: 0 8px 30px rgba(30,40,55,.12);
+  }
+  #brufik-true-3d .b3-hint {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    color: #7a808a;
+    pointer-events: none;
+  }
+  #brufik-true-3d .b3-detail {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid rgba(218,222,229,.92);
+    border-radius: 14px;
+    color: #5e646f;
+    background: rgba(255,255,255,.88);
+    box-shadow: 0 10px 35px rgba(43,51,66,.09);
+    backdrop-filter: blur(12px);
+    pointer-events: none;
+  }
+  #brufik-true-3d .b3-detail strong { color: #16181d; font-weight: 500; white-space: nowrap; }
+  @media (max-width: 620px) {
+    #brufik-true-3d .b3-head { align-items: flex-start; }
+    #brufik-true-3d .b3-sub { display: block; max-width: 280px; }
+    #brufik-true-3d .b3-stage { height: 560px; min-height: 560px; border-radius: 18px; }
+    #brufik-true-3d .b3-controls { display: grid; grid-template-columns: 1fr; align-items: start; }
+    #brufik-true-3d .b3-range,
+    #brufik-true-3d .b3-controls .form-label:has(select) { width: 100%; min-width: 0; }
+    #brufik-true-3d .b3-detail { align-items: flex-start; flex-direction: column; gap: 2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #brufik-true-3d #b3-play { display: none; }
+  }
+&lt;/style&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const root = document.getElementById(&#x27;brufik-true-3d&#x27;);
+  const canvas = document.getElementById(&#x27;b3-canvas&#x27;);
+  const stage = root.querySelector(&#x27;.b3-stage&#x27;);
+  const loading = document.getElementById(&#x27;b3-loading&#x27;);
+  const detail = document.getElementById(&#x27;b3-detail&#x27;);
+  const explodeInput = document.getElementById(&#x27;b3-explode&#x27;);
+  const explodeValue = document.getElementById(&#x27;b3-explode-value&#x27;);
+  const xrayInput = document.getElementById(&#x27;b3-xray&#x27;);
+  const rotateInput = document.getElementById(&#x27;b3-rotate&#x27;);
+  const focusSelect = document.getElementById(&#x27;b3-focus&#x27;);
+  const playButton = document.getElementById(&#x27;b3-play&#x27;);
+  const resetButton = document.getElementById(&#x27;b3-reset&#x27;);
+
+  if (!window.THREE) {
+    loading.textContent = &#x27;三维引擎加载失败，请检查网络后刷新&#x27;;
+    return;
+  }
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf6f8fb);
+  const camera = new THREE.PerspectiveCamera(31, 1, 0.1, 1800);
+  const defaultCamera = new THREE.Vector3(380, 300, 440);
+  const defaultTarget = new THREE.Vector3(0, 100, 0);
+  camera.position.copy(defaultCamera);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: &#x27;high-performance&#x27; });
+  renderer.setClearColor(0xf6f8fb, 1);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.16;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+  class Orbit {
+    constructor(activeCamera, element) {
+      this.camera = activeCamera;
+      this.element = element;
+      this.target = defaultTarget.clone();
+      this.dragging = false;
+      this.moved = 0;
+      this.last = new THREE.Vector2();
+      this.autoRotate = false;
+      element.addEventListener(&#x27;pointerdown&#x27;, event =&gt; {
+        this.dragging = true;
+        this.moved = 0;
+        this.last.set(event.clientX, event.clientY);
+        element.setPointerCapture(event.pointerId);
+      });
+      element.addEventListener(&#x27;pointermove&#x27;, event =&gt; {
+        if (!this.dragging) return;
+        const dx = event.clientX - this.last.x;
+        const dy = event.clientY - this.last.y;
+        this.last.set(event.clientX, event.clientY);
+        this.moved += Math.abs(dx) + Math.abs(dy);
+        this.rotate(-dx * .006, -dy * .005);
+      });
+      const stop = () =&gt; { this.dragging = false; };
+      element.addEventListener(&#x27;pointerup&#x27;, stop);
+      element.addEventListener(&#x27;pointercancel&#x27;, stop);
+      element.addEventListener(&#x27;wheel&#x27;, event =&gt; {
+        event.preventDefault();
+        const offset = this.camera.position.clone().sub(this.target);
+        const distance = THREE.MathUtils.clamp(offset.length() * Math.exp(event.deltaY * .001), 220, 900);
+        this.camera.position.copy(this.target).add(offset.setLength(distance));
+      }, { passive: false });
+    }
+    rotate(azimuth, polar) {
+      const offset = this.camera.position.clone().sub(this.target);
+      const spherical = new THREE.Spherical().setFromVector3(offset);
+      spherical.theta += azimuth;
+      spherical.phi = THREE.MathUtils.clamp(spherical.phi + polar, .16, Math.PI - .16);
+      this.camera.position.copy(this.target).add(new THREE.Vector3().setFromSpherical(spherical));
+    }
+    update() {
+      if (this.autoRotate &amp;&amp; !this.dragging) this.rotate(.0025, 0);
+      this.camera.lookAt(this.target);
+    }
+  }
+  const orbit = new Orbit(camera, canvas);
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0xb8c0cc, 2.65);
+  scene.add(hemi);
+  const key = new THREE.DirectionalLight(0xffffff, 4.4);
+  key.position.set(280, 390, 260);
+  key.castShadow = true;
+  key.shadow.mapSize.set(2048, 2048);
+  key.shadow.camera.left = -260;
+  key.shadow.camera.right = 260;
+  key.shadow.camera.top = 340;
+  key.shadow.camera.bottom = -130;
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0xd9e9ff, 2.1);
+  fill.position.set(-260, 180, 160);
+  scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xfff1dc, 1.6);
+  rim.position.set(60, 260, -300);
+  scene.add(rim);
+
+  const materialList = [];
+  function material(color, options = {}) {
+    const value = new THREE.MeshPhysicalMaterial({
+      color,
+      roughness: options.roughness ?? .42,
+      metalness: options.metalness ?? .05,
+      clearcoat: options.clearcoat ?? .12,
+      clearcoatRoughness: options.clearcoatRoughness ?? .35,
+      transparent: (options.opacity ?? 1) &lt; 1,
+      opacity: options.opacity ?? 1,
+      transmission: options.transmission ?? 0,
+      side: options.side ?? THREE.FrontSide
+    });
+    value.userData.baseOpacity = value.opacity;
+    materialList.push(value);
+    return value;
+  }
+  const M = {
+    shell: material(0xf4f4f1, { roughness: .28, clearcoat: .35 }),
+    shellEdge: material(0xd9dde2, { roughness: .38, metalness: .08 }),
+    glass: material(0x101722, { roughness: .12, clearcoat: .8 }),
+    face: material(0x20c7e8, { roughness: .24, clearcoat: .4 }),
+    pcb: material(0x197a52, { roughness: .5 }),
+    pcbDark: material(0x143d31, { roughness: .55 }),
+    chip: material(0x171a20, { roughness: .34 }),
+    metal: material(0x9199a3, { metalness: .74, roughness: .24 }),
+    darkMetal: material(0x343941, { metalness: .56, roughness: .3 }),
+    copper: material(0xc87531, { metalness: .64, roughness: .24 }),
+    gold: material(0xd8a94d, { metalness: .72, roughness: .22 }),
+    servo: material(0x222936, { roughness: .35, clearcoat: .25 }),
+    battery: material(0x7899bc, { metalness: .2, roughness: .34 }),
+    speaker: material(0x2a2d33, { roughness: .7 }),
+    wheel: material(0x181b20, { roughness: .78 }),
+    roller: material(0x5f6873, { metalness: .18, roughness: .6 }),
+    acrylic: material(0x1a1d22, { opacity: .96, roughness: .34, clearcoat: .22, side: THREE.DoubleSide }),
+    cowl: material(0xf5f4ef, { roughness: .25, clearcoat: .38, side: THREE.DoubleSide }),
+    trim: material(0x15191f, { roughness: .24, clearcoat: .6 }),
+    red: material(0xb94c45, { roughness: .4 })
+  };
+
+  const parts = [];
+  const partMap = new Map();
+  function addPart(keyName, label, description, size, base, exploded) {
+    const group = new THREE.Group();
+    const part = {
+      key: keyName,
+      label,
+      description,
+      size,
+      group,
+      base: new THREE.Vector3(...base),
+      exploded: new THREE.Vector3(...exploded)
+    };
+    group.position.copy(part.base);
+    group.userData.partKey = keyName;
+    scene.add(group);
+    parts.push(part);
+    partMap.set(keyName, part);
+    const option = document.createElement(&#x27;option&#x27;);
+    option.value = keyName;
+    option.textContent = label;
+    focusSelect.appendChild(option);
+    return part;
+  }
+  function register(part, object) {
+    object.traverse(node =&gt; {
+      if (!node.isMesh) return;
+      node.castShadow = true;
+      node.receiveShadow = true;
+      node.userData.partKey = part.key;
+      node.material = node.material.clone();
+      node.material.userData.baseOpacity = node.material.opacity;
+      materialList.push(node.material);
+    });
+    part.group.add(object);
+    return object;
+  }
+  function mesh(part, geometry, mat, position = [0,0,0], rotation = [0,0,0]) {
+    const value = new THREE.Mesh(geometry, mat);
+    value.position.set(...position);
+    value.rotation.set(...rotation);
+    return register(part, value);
+  }
+  function roundedRectShape(width, height, radius) {
+    const w = width / 2, h = height / 2, r = Math.min(radius, w, h);
+    const shape = new THREE.Shape();
+    shape.moveTo(-w + r, -h);
+    shape.lineTo(w - r, -h);
+    shape.quadraticCurveTo(w, -h, w, -h + r);
+    shape.lineTo(w, h - r);
+    shape.quadraticCurveTo(w, h, w - r, h);
+    shape.lineTo(-w + r, h);
+    shape.quadraticCurveTo(-w, h, -w, h - r);
+    shape.lineTo(-w, -h + r);
+    shape.quadraticCurveTo(-w, -h, -w + r, -h);
+    shape.closePath();
+    return shape;
+  }
+  function roundedBox(width, height, depth, radius, mat, bevel = 1.2) {
+    const geometry = new THREE.ExtrudeGeometry(roundedRectShape(width, height, radius), {
+      depth,
+      curveSegments: 24,
+      bevelEnabled: bevel &gt; 0,
+      bevelThickness: bevel,
+      bevelSize: bevel,
+      bevelSegments: 4
+    });
+    geometry.translate(0, 0, -depth / 2);
+    geometry.computeVertexNormals();
+    return new THREE.Mesh(geometry, mat);
+  }
+  function roundedBoxMesh(part, dimensions, radius, mat, position = [0,0,0], rotation = [0,0,0], bevel = 1.2) {
+    const value = roundedBox(dimensions[0], dimensions[1], dimensions[2], radius, mat, bevel);
+    value.position.set(...position);
+    value.rotation.set(...rotation);
+    return register(part, value);
+  }
+  function taperedRoundedBox(bottomWidth, bottomDepth, topWidth, topDepth, height, radius, mat) {
+    const geometry = new THREE.ExtrudeGeometry(roundedRectShape(bottomWidth, bottomDepth, radius), {
+      depth: height,
+      curveSegments: 24,
+      bevelEnabled: true,
+      bevelThickness: .7,
+      bevelSize: .7,
+      bevelSegments: 3
+    });
+    const position = geometry.attributes.position;
+    for (let i = 0; i &lt; position.count; i++) {
+      const t = THREE.MathUtils.clamp(position.getZ(i) / height, 0, 1);
+      position.setX(i, position.getX(i) * THREE.MathUtils.lerp(1, topWidth / bottomWidth, t));
+      position.setY(i, position.getY(i) * THREE.MathUtils.lerp(1, topDepth / bottomDepth, t));
+    }
+    geometry.rotateX(-Math.PI / 2);
+    geometry.computeVertexNormals();
+    return new THREE.Mesh(geometry, mat);
+  }
+  function convexHull(points) {
+    const sorted = points.slice().sort((a,b) =&gt; a.x - b.x || a.y - b.y);
+    const cross = (o,a,b) =&gt; (a.x-o.x)*(b.y-o.y) - (a.y-o.y)*(b.x-o.x);
+    const lower = [];
+    for (const p of sorted) { while (lower.length &gt; 1 &amp;&amp; cross(lower.at(-2), lower.at(-1), p) &lt;= 0) lower.pop(); lower.push(p); }
+    const upper = [];
+    for (let i = sorted.length - 1; i &gt;= 0; i--) { const p = sorted[i]; while (upper.length &gt; 1 &amp;&amp; cross(upper.at(-2), upper.at(-1), p) &lt;= 0) upper.pop(); upper.push(p); }
+    lower.pop(); upper.pop();
+    return lower.concat(upper);
+  }
+  function triShape(centerRadius = 50, cornerRadius = 24) {
+    const points = [];
+    for (const degrees of [90, 210, 330]) {
+      const a = THREE.MathUtils.degToRad(degrees);
+      const cx = centerRadius * Math.cos(a), cy = centerRadius * Math.sin(a);
+      for (let i = 0; i &lt; 20; i++) {
+        const t = i / 20 * Math.PI * 2;
+        points.push(new THREE.Vector2(cx + cornerRadius * Math.cos(t), cy + cornerRadius * Math.sin(t)));
+      }
+    }
+    const hull = convexHull(points);
+    const shape = new THREE.Shape();
+    shape.moveTo(hull[0].x, hull[0].y);
+    hull.slice(1).forEach(p =&gt; shape.lineTo(p.x, p.y));
+    shape.closePath();
+    return shape;
+  }
+  function horizontalShape(shape, depth, mat, bevel = .5) {
+    const geometry = new THREE.ExtrudeGeometry(shape, {
+      depth,
+      curveSegments: 18,
+      bevelEnabled: bevel &gt; 0,
+      bevelThickness: bevel,
+      bevelSize: bevel,
+      bevelSegments: 2
+    });
+    geometry.translate(0, 0, -depth / 2);
+    geometry.computeVertexNormals();
+    const value = new THREE.Mesh(geometry, mat);
+    value.rotation.x = -Math.PI / 2;
+    return value;
+  }
+  function cylinderBetween(radius, length, mat, axis = &#x27;y&#x27;) {
+    const value = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 24), mat);
+    if (axis === &#x27;x&#x27;) value.rotation.z = Math.PI / 2;
+    if (axis === &#x27;z&#x27;) value.rotation.x = Math.PI / 2;
+    return value;
+  }
+  function makeOmniWheel(part, angle) {
+    const a = THREE.MathUtils.degToRad(angle);
+    const assembly = new THREE.Group();
+    const hub = cylinderBetween(16.5, 16, M.wheel, &#x27;x&#x27;);
+    assembly.add(hub);
+    const inner = cylinderBetween(8, 19, M.darkMetal, &#x27;x&#x27;);
+    assembly.add(inner);
+    for (let i = 0; i &lt; 12; i++) {
+      const t = i / 12 * Math.PI * 2;
+      const roller = new THREE.Mesh(new THREE.CapsuleGeometry(3.6, 7.5, 4, 10), M.roller);
+      roller.position.set(0, 21.2 * Math.cos(t), 21.2 * Math.sin(t));
+      roller.rotation.x = t + Math.PI / 2;
+      roller.rotation.z = .56;
+      assembly.add(roller);
+    }
+    assembly.position.set(57 * Math.cos(a), 0, 57 * Math.sin(a));
+    assembly.rotation.y = -a;
+    return register(part, assembly);
+  }
+  function makeN20(part, angle) {
+    const a = THREE.MathUtils.degToRad(angle);
+    const assembly = new THREE.Group();
+    const motor = cylinderBetween(6, 28, M.metal, &#x27;x&#x27;);
+    assembly.add(motor);
+    const gearbox = new THREE.Mesh(new THREE.BoxGeometry(12, 11, 10), M.gold);
+    gearbox.position.x = 18;
+    assembly.add(gearbox);
+    const shaft = cylinderBetween(1.5, 9, M.darkMetal, &#x27;x&#x27;);
+    shaft.position.x = 28;
+    assembly.add(shaft);
+    assembly.position.set(29 * Math.cos(a), 0, 29 * Math.sin(a));
+    assembly.rotation.y = -a;
+    return register(part, assembly);
+  }
+
+  const deck = addPart(&#x27;deck&#x27;, &#x27;N3 双层底盘&#x27;, &#x27;两层 3 mm 磨砂亚克力板，板间 30 mm；整套底盘外廓按 160 × 150 × 65 mm。&#x27;, &#x27;160 × 150 × 65 mm&#x27;, [0,15,0], [0,-10,0]);
+  const lowerPlate = horizontalShape(triShape(42,20), 3, M.acrylic, .4); lowerPlate.position.y = 0; register(deck, lowerPlate);
+  const upperPlate = horizontalShape(triShape(42,20), 3, M.acrylic, .4); upperPlate.position.y = 34; register(deck, upperPlate);
+  for (const degrees of [0,60,120,180,240,300]) {
+    const a = THREE.MathUtils.degToRad(degrees);
+    mesh(deck, new THREE.CylinderGeometry(2.4,2.4,31,16), M.gold, [46*Math.cos(a),17,46*Math.sin(a)]);
+  }
+
+  const driveUnits = [
+    { key: &#x27;drive-front&#x27;, label: &#x27;前轮运动总成&#x27;, angle: 90, explode: [-110,20,90] },
+    { key: &#x27;drive-left&#x27;, label: &#x27;左后轮运动总成&#x27;, angle: 210, explode: [96,20,74] },
+    { key: &#x27;drive-right&#x27;, label: &#x27;右后轮运动总成&#x27;, angle: 330, explode: [100,8,-25] }
+  ];
+  driveUnits.forEach(unit =&gt; {
+    const part = addPart(
+      unit.key,
+      unit.label,
+      &#x27;一组完整运动单元：N20 金属减速电机径向安装在双层底板之间，D 形输出轴与轮毂同轴并直接插入；三只轮心沿作者底盘的 R57 mm 圆周保持不变。&#x27;,
+      &#x27;轮心 R57 mm；全向轮 Ø50 × 16 mm；整套底盘约 160 × 150 mm&#x27;,
+      [0,29,0],
+      unit.explode
+    );
+    makeN20(part, unit.angle);
+    makeOmniWheel(part, unit.angle);
+  });
+
+  const basePcb = addPart(&#x27;base-pcb&#x27;, &#x27;移动底座控制 PCB&#x27;, &#x27;92 × 74 mm 新 PCB 下沉安装在上层底板内侧，减少高位重量并缩短三路电机走线。&#x27;, &#x27;92 × 74 × 12 mm&#x27;, [0,45.5,0], [92,8,4]);
+  roundedBoxMesh(basePcb, [92,74,3], 3, M.pcb, [0,0,0], [-Math.PI/2,0,0], .4);
+  roundedBoxMesh(basePcb, [23,5,18], 2, M.chip, [22,5,10]);
+  roundedBoxMesh(basePcb, [18,4,10], 1.5, M.chip, [-22,4,14]);
+  roundedBoxMesh(basePcb, [18,4,10], 1.5, M.chip, [-22,4,-7]);
+  mesh(basePcb, new THREE.CylinderGeometry(5,5,11,20), M.copper, [33,7,-23]);
+  mesh(basePcb, new THREE.CylinderGeometry(4,4,9,20), M.gold, [17,6,-24]);
+  for (const x of [-40,-32,-24,-16,-8,0,8]) mesh(basePcb, new THREE.BoxGeometry(4,4,2), M.gold, [x,3,-31]);
+
+  const battery = addPart(&#x27;battery&#x27;, &#x27;2S 电池与 5 V 降压&#x27;, &#x27;横向固定在 N3 上下底板之间的最低可用位置，作为底部配重并避开三只 N20 电机。&#x27;, &#x27;74 × 40 × 22 mm&#x27;, [0,31,-6], [-86,4,-18]);
+  roundedBoxMesh(battery, [74,22,40], 5, M.battery, [0,0,0], [0,0,0], 1.1);
+  roundedBoxMesh(battery, [16,9,4], 2, M.chip, [27,10,0]);
+  mesh(battery, new THREE.CylinderGeometry(2,2,11,12), M.red, [31,12,4], [Math.PI/2,0,0]);
+  mesh(battery, new THREE.CylinderGeometry(2,2,11,12), M.chip, [23,12,4], [Math.PI/2,0,0]);
+
+  const cowl = addPart(&#x27;cowl&#x27;, &#x27;N3 低矮承力转接板&#x27;, &#x27;取消过渡舱。74 × 66 mm 承力板直接贴合 N3 顶板，通过 58 × 49 mm 四孔锁紧；中央开孔只负责线束穿行。&#x27;, &#x27;74 × 66 × 9 mm；孔位 58 × 49 mm；中央走线孔 Ø16 mm&#x27;, [0,50.8,0], [0,22,0]);
+  roundedBoxMesh(cowl, [74,3,66], 9, M.trim, [0,1.5,0], [0,0,0], .6);
+  roundedBoxMesh(cowl, [74,6,66], 9, M.shell, [0,6,0], [0,0,0], .8);
+  for (const [x,z] of [[-29,-24.5],[29,-24.5],[29,24.5],[-29,24.5]]) {
+    mesh(cowl, new THREE.CylinderGeometry(1.8,1.8,2,18), M.darkMetal, [x,9.5,z]);
+  }
+  mesh(cowl, new THREE.TorusGeometry(8,1.5,12,36), M.trim, [0,9.5,0], [Math.PI/2,0,0]);
+
+  const bodyRear = addPart(&#x27;body-rear&#x27;, &#x27;机身后壳&#x27;, &#x27;回归第一版上半身尺度，底面直接落在低矮承力转接板上。&#x27;, &#x27;70 × 46 × 36 mm&#x27;, [0,86,-10], [0,7,-68]);
+  roundedBoxMesh(bodyRear, [70,46,36], 17, M.shell, [0,0,0], [0,0,0], 2.6);
+  roundedBoxMesh(bodyRear, [66,4,46], 8, M.trim, [0,-21,3], [0,0,0], .7);
+  roundedBoxMesh(bodyRear, [3,28,23], 1.3, M.trim, [36,1,-3], [0,0,0], .45);
+  for (let y = -8; y &lt;= 10; y += 4.5) roundedBoxMesh(bodyRear, [1.1,2,13], .45, M.shellEdge, [37.5,y,-3], [0,0,0], .2);
+
+  const bodyFrame = addPart(&#x27;body-frame&#x27;, &#x27;机身内骨架&#x27;, &#x27;直接连接 N3 承力板、主控板、扬声器和 X 轴回转机构。&#x27;, &#x27;60 × 44 × 28 mm&#x27;, [0,86,0], [0,3,0]);
+  roundedBoxMesh(bodyFrame, [58,44,5], 4, M.shellEdge, [0,-21,0], [-Math.PI/2,0,0], .8);
+  roundedBoxMesh(bodyFrame, [6,42,9], 2.5, M.darkMetal, [-27,0,0]);
+  roundedBoxMesh(bodyFrame, [6,42,9], 2.5, M.darkMetal, [27,0,0]);
+  roundedBoxMesh(bodyFrame, [54,6,9], 2.5, M.darkMetal, [0,21,0]);
+
+  const audio = addPart(&#x27;audio&#x27;, &#x27;音频与扬声器模块&#x27;, &#x27;MAX98357 功放、麦克风和 4 Ω 扬声器；远场收音位于机身正面。&#x27;, &#x27;约 36 × 28 × 18 mm&#x27;, [0,86,5], [-62,10,30]);
+  roundedBoxMesh(audio, [36,28,3], 2, M.pcb, [0,0,0]);
+  mesh(audio, new THREE.CylinderGeometry(10,10,8,32), M.speaker, [-18,0,0], [Math.PI/2,0,0]);
+  mesh(audio, new THREE.CylinderGeometry(3.2,3.2,6,20), M.metal, [15,-7,3], [Math.PI/2,0,0]);
+  roundedBoxMesh(audio, [10,8,5], 1, M.chip, [12,7,3]);
+
+  const bodyFront = addPart(&#x27;body-front&#x27;, &#x27;机身前壳&#x27;, &#x27;紧凑前壳保留独立摄像头舱、麦克风声孔和可拆维护面板。&#x27;, &#x27;70 × 46 × 14 mm&#x27;, [0,86,17], [0,7,68]);
+  roundedBoxMesh(bodyFront, [70,46,14], 17, M.shell, [0,0,0], [0,0,0], 2.5);
+  roundedBoxMesh(bodyFront, [32,22,3], 8, M.trim, [0,3,9], [0,0,0], .6);
+  for (const x of [-6,-3,0,3,6]) mesh(bodyFront, new THREE.CylinderGeometry(.7,.7,3,12), M.darkMetal, [x,-16,9], [Math.PI/2,0,0]);
+
+  const yaw = addPart(&#x27;yaw-servo&#x27;, &#x27;Y 轴 9g 舵机&#x27;, &#x27;标准 9g 180° 舵机，隐藏在紧凑头壳内部，负责头部上下俯仰。&#x27;, &#x27;28.5 × 12 × 32.3 mm&#x27;, [4,159,-1], [-54,5,-8]);
+  roundedBoxMesh(yaw, [28.5,31,12], 2, M.servo, [0,0,0]);
+  mesh(yaw, new THREE.CylinderGeometry(6,6,4,28), M.shell, [7,18,0]);
+  mesh(yaw, new THREE.CylinderGeometry(2,2,15,16), M.gold, [7,24,0]);
+
+  const neck = addPart(&#x27;neck&#x27;, &#x27;独立颈部与俯仰支架&#x27;, &#x27;约 18 mm 高的圆柱颈连接机身与头部，U 形支架、9g 舵机和从动轴隐藏在头壳内部。&#x27;, &#x27;外观颈柱 Ø23 × 18 mm；支架 54 × 32 × 18 mm&#x27;, [0,119,0], [0,24,0]);
+  roundedBoxMesh(neck, [5,20,10], 2, M.shellEdge, [-22,16,0]);
+  roundedBoxMesh(neck, [5,20,10], 2, M.shellEdge, [22,16,0]);
+  roundedBoxMesh(neck, [49,5,10], 2, M.shellEdge, [0,8,0]);
+  mesh(neck, new THREE.CylinderGeometry(3.5,3.5,46,20), M.metal, [0,21,0], [0,0,Math.PI/2]);
+  mesh(neck, new THREE.CylinderGeometry(15,16,4,40), M.trim, [0,-8,0]);
+  mesh(neck, new THREE.CylinderGeometry(10.5,11.5,18,40), M.shell, [0,1,0]);
+  mesh(neck, new THREE.CylinderGeometry(14,15,3.5,40), M.trim, [0,10,0]);
+
+  const headRear = addPart(&#x27;head-rear&#x27;, &#x27;头部后壳&#x27;, &#x27;按第一版头部包络收紧，包覆 9g 俯仰舵机、显示屏排线和从动轴。&#x27;, &#x27;72 × 54 × 40 mm&#x27;, [0,156,-10], [0,4,-76]);
+  roundedBoxMesh(headRear, [72,54,40], 18, M.shell, [0,0,0], [0,0,0], 2.8);
+  roundedBoxMesh(headRear, [3,30,23], 1.3, M.trim, [37,1,-2], [0,0,0], .45);
+  for (let y = -9; y &lt;= 10; y += 5) roundedBoxMesh(headRear, [1.1,2.1,14], .45, M.shellEdge, [38.4,y,-2], [0,0,0], .2);
+
+  const c3 = addPart(&#x27;c3-sense&#x27;, &#x27;ESP32-C3 Sense 核心板&#x27;, &#x27;核心板及载板位于机身内部，负责屏幕、语音、摄像头和双舵机控制。&#x27;, &#x27;核心板约 21 × 18 mm；载板约 43 × 34 mm&#x27;, [0,86,-1], [58,10,-14]);
+  roundedBoxMesh(c3, [43,34,3], 2, M.pcb, [0,0,0]);
+  roundedBoxMesh(c3, [18,20,5], 2, M.metal, [-7,1,4]);
+  roundedBoxMesh(c3, [9,7,4], 1, M.chip, [15,8,4]);
+  for (let i = -4; i &lt;= 4; i++) {
+    mesh(c3, new THREE.BoxGeometry(2,2,1.5), M.gold, [-20,i*3.3,2]);
+    mesh(c3, new THREE.BoxGeometry(2,2,1.5), M.gold, [20,i*3.3,2]);
+  }
+
+  const pitch = addPart(&#x27;pitch-servo&#x27;, &#x27;X 轴 2g 微型舵机总成&#x27;, &#x27;独立的 2g 180° 小舵机收进机身底层；输出齿轮依次啮合惰轮和中空回转大齿轮，负责左右摇头。&#x27;, &#x27;舵机包络 20 × 12 × 22 mm&#x27;, [-22,71,0], [98,-4,22]);
+  roundedBoxMesh(pitch, [20,12,16], 2, M.servo, [0,0,0]);
+  roundedBoxMesh(pitch, [29,3,10], 1, M.servo, [0,-6,0], [0,0,0], .4);
+  mesh(pitch, new THREE.CylinderGeometry(4.5,4.5,3,24), M.shell, [7,8,0]);
+  mesh(pitch, new THREE.CylinderGeometry(4,4,4,28), M.copper, [14,5,0]);
+  mesh(pitch, new THREE.CylinderGeometry(5.5,5.5,4,28), M.darkMetal, [23,5,0]);
+  mesh(pitch, new THREE.CylinderGeometry(9,9,4,32), M.darkMetal, [34,5,0]);
+  mesh(pitch, new THREE.TorusGeometry(5.2,1.2,10,32), M.metal, [34,8,0], [Math.PI/2,0,0]);
+
+  const cameraPart = addPart(&#x27;camera&#x27;, &#x27;OV2640 摄像头&#x27;, &#x27;2 MP OV2640 摄像头模组，安装在机身正面的独立通用托架内。&#x27;, &#x27;最大包络 24 × 24 mm&#x27;, [0,89,27], [-58,11,38]);
+  roundedBoxMesh(cameraPart, [25,19,3], 2, M.pcb, [0,0,0]);
+  mesh(cameraPart, new THREE.CylinderGeometry(6,6,11,28), M.glass, [0,0,7], [Math.PI/2,0,0]);
+  mesh(cameraPart, new THREE.TorusGeometry(7,1.1,8,28), M.metal, [0,0,6], [0,0,0]);
+
+  const display = addPart(&#x27;display&#x27;, &#x27;头部显示与前框总成&#x27;, &#x27;40 × 33 mm 有效显示模组安装在接近第一版尺寸的黑色面罩和白色前框中。&#x27;, &#x27;外框 72 × 54 × 10 mm；有效屏约 40 × 33 mm&#x27;, [0,156,22], [0,2,78]);
+  roundedBoxMesh(display, [72,54,10], 18, M.shell, [0,0,0], [0,0,0], 2.7);
+  roundedBoxMesh(display, [56,43,3.5], 13, M.glass, [0,0,7], [0,0,0], 1.1);
+  mesh(display, new THREE.CircleGeometry(3.1,28), M.face, [-11,4,9]);
+  mesh(display, new THREE.CircleGeometry(3.1,28), M.face, [11,4,9]);
+  roundedBoxMesh(display, [16,3.6,1.1], 2, M.face, [0,-10,9], [0,0,0], .2);
+
+  const touch = addPart(&#x27;touch&#x27;, &#x27;头顶触摸电极&#x27;, &#x27;24 × 16 mm 铜箔电极，配独立绝缘支架，位于头部顶面内侧。&#x27;, &#x27;32 × 24 × 1.6 mm&#x27;, [0,184,-5], [0,44,-26]);
+  roundedBoxMesh(touch, [32,24,1.6], 4, M.copper, [0,0,0], [Math.PI/2,0,0], .2);
+
+  const fasteners = addPart(&#x27;fasteners&#x27;, &#x27;紧固件与线束&#x27;, &#x27;四颗 M3 穿板螺钉隐藏在低矮承力板内，另含壳体螺钉、舵机线和头部软排线。&#x27;, &#x27;M2 / M3&#x27;, [0,55,0], [-118,36,72]);
+  for (const [x,z] of [[-29,-24.5],[29,-24.5],[29,24.5],[-29,24.5]]) {
+    mesh(fasteners, new THREE.CylinderGeometry(1.7,1.7,8,16), M.metal, [x,0,z]);
+    mesh(fasteners, new THREE.CylinderGeometry(3.2,3.2,1.8,20), M.darkMetal, [x,4.8,z]);
+  }
+
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(900,900), new THREE.ShadowMaterial({ color: 0x718096, opacity: .12 }));
+  floor.rotation.x = -Math.PI / 2;
+  floor.position.y = -2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+  const floorRing = new THREE.Mesh(new THREE.RingGeometry(100,180,96), new THREE.MeshBasicMaterial({ color: 0xd9dfe8, transparent: true, opacity: .28, side: THREE.DoubleSide }));
+  floorRing.rotation.x = -Math.PI / 2;
+  floorRing.position.y = -1.7;
+  scene.add(floorRing);
+
+  const xrayShellKeys = new Set([&#x27;cowl&#x27;, &#x27;body-rear&#x27;, &#x27;body-front&#x27;, &#x27;head-rear&#x27;, &#x27;display&#x27;]);
+  let selectedKey = &#x27;&#x27;;
+  function selectPart(keyName) {
+    selectedKey = keyName || &#x27;&#x27;;
+    focusSelect.value = selectedKey;
+    parts.forEach(part =&gt; {
+      const active = !selectedKey || part.key === selectedKey;
+      part.group.traverse(node =&gt; {
+        if (!node.isMesh) return;
+        const originalOpacity = node.material.userData.baseOpacity ?? 1;
+        const baseOpacity = xrayInput.checked &amp;&amp; xrayShellKeys.has(part.key) ? Math.min(originalOpacity, .22) : originalOpacity;
+        node.material.opacity = selectedKey &amp;&amp; !active ? Math.min(baseOpacity, .1) : baseOpacity;
+        node.material.transparent = node.material.opacity &lt; 1;
+        if (&#x27;emissive&#x27; in node.material) {
+          node.material.emissive.setHex(active &amp;&amp; selectedKey ? 0x123b46 : 0x000000);
+          node.material.emissiveIntensity = active &amp;&amp; selectedKey ? .28 : 0;
+        }
+      });
+    });
+    if (!selectedKey) {
+      detail.innerHTML = xrayInput.checked
+        ? &#x27;&lt;strong&gt;装配透视&lt;/strong&gt;&lt;span&gt;取消过渡舱；线束由中央 Ø16 mm 孔直接进入机身，电池与移动 PCB 留在双层底盘低位&lt;/span&gt;&#x27;
+        : &#x27;&lt;strong&gt;整机总成&lt;/strong&gt;&lt;span&gt;约 160 × 150 × 184 mm · 轮心 R57 mm · 机身通过 9 mm 低矮承力板直装&lt;/span&gt;&#x27;;
+      return;
+    }
+    const part = partMap.get(selectedKey);
+    detail.innerHTML = `&lt;strong&gt;${part.label}&lt;/strong&gt;&lt;span&gt;${part.size} · ${part.description}&lt;/span&gt;`;
+  }
+
+  let explodeNow = 0;
+  let explodeTarget = 0;
+  let demo = false;
+  let demoStarted = 0;
+  function setExplode(value) {
+    explodeTarget = THREE.MathUtils.clamp(value, 0, 1);
+    explodeInput.value = String(Math.round(explodeTarget * 100));
+    explodeValue.textContent = `${explodeInput.value}%`;
+  }
+  explodeInput.addEventListener(&#x27;input&#x27;, () =&gt; {
+    demo = false;
+    playButton.textContent = &#x27;自动拆解&#x27;;
+    setExplode(Number(explodeInput.value) / 100);
+  });
+  focusSelect.addEventListener(&#x27;change&#x27;, () =&gt; selectPart(focusSelect.value));
+  xrayInput.addEventListener(&#x27;change&#x27;, () =&gt; selectPart(selectedKey));
+  rotateInput.addEventListener(&#x27;change&#x27;, () =&gt; { orbit.autoRotate = rotateInput.checked; });
+  playButton.addEventListener(&#x27;click&#x27;, () =&gt; {
+    demo = !demo;
+    demoStarted = performance.now();
+    playButton.textContent = demo ? &#x27;停止演示&#x27; : &#x27;自动拆解&#x27;;
+  });
+  resetButton.addEventListener(&#x27;click&#x27;, () =&gt; {
+    camera.position.copy(defaultCamera);
+    orbit.target.copy(defaultTarget);
+    selectPart(&#x27;&#x27;);
+  });
+
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  canvas.addEventListener(&#x27;pointerup&#x27;, event =&gt; {
+    if (orbit.moved &gt; 5) return;
+    const rect = canvas.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(parts.map(part =&gt; part.group), true).find(item =&gt; item.object.userData.partKey);
+    if (hit) selectPart(hit.object.userData.partKey);
+  });
+
+  function resize() {
+    const width = Math.max(1, stage.clientWidth);
+    const height = Math.max(1, stage.clientHeight);
+    renderer.setSize(width, height, false);
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+
+  selectPart(&#x27;&#x27;);
+  loading.remove();
+  function animate(now) {
+    if (demo) {
+      const cycle = ((now - demoStarted) % 9000) / 9000;
+      const smooth = .5 - .5 * Math.cos(cycle * Math.PI * 2);
+      setExplode(.08 + smooth * .9);
+    }
+    explodeNow += (explodeTarget - explodeNow) * .09;
+    for (const part of parts) {
+      part.group.position.copy(part.base).addScaledVector(part.exploded, explodeNow);
+    }
+    orbit.update();
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+})();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>

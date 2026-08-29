@@ -1,0 +1,15 @@
+﻿Connector,Pin,Net,Description
+J1,1,BAT_RAW,2S protected battery positive
+J1,2,GND,Battery negative
+J2,1,BAT_FUSED,To external latching switch
+J2,2,VBAT,Switched return; jumper J2 for bench test
+J3,1/2,M1_B/M1_A,N20 motor 1
+J4,1/2,M2_B/M2_A,N20 motor 2
+J5,1/2,M3_B/M3_A,N20 motor 3
+J6,1,+5V,5V up to 3A for current robot
+J6,2,GND,Common ground
+J6,3,UART_TX,Base TX to upper RX
+J6,4,UART_RX,Base RX from upper TX
+J7,1,+3V3,Touch module power
+J7,2,GND,Touch module ground
+J7,3,TOUCH,Digital touch output to XIAO D10

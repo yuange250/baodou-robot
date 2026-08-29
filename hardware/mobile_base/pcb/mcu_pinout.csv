@@ -1,0 +1,12 @@
+﻿XIAO Pin,Net,Description
+D0,M1_IN2,Motor 1 direction/PWM B
+D1,M1_IN1,Motor 1 direction/PWM A
+D2,M2_IN1,Motor 2 direction/PWM A
+D3,M2_IN2,Motor 2 direction/PWM B
+D4,M3_IN1,Motor 3 direction/PWM A
+D5,M3_IN2,Motor 3 direction/PWM B
+D6,UART_TX,Base TX to upper-body RX
+D7,UART_RX,Base RX from upper-body TX
+D8,SPARE,Reserved
+D9,SPARE,Reserved
+D10,TOUCH,Digital touch input

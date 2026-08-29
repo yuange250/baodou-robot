@@ -1,0 +1,1162 @@
+from __future__ import annotations
+
+import asyncio
+import base64
+import json
+import logging
+import time
+from typing import Optional
+
+from websockets.exceptions import ConnectionClosed
+
+from deskbot_server.infrastructure.ws.downlink_adapter import WsDownlinkAdapter
+from deskbot_server.service.application.asr_chat_uplink import (
+    PendingUplinkBinary,
+    coerce_audio_flush,
+    coerce_next_bin_len,
+    coerce_opus_frames,
+    pack_ws_downlink_frame,
+    parse_packed_frame,
+)
+from deskbot_server.service.application.boot_wake import deliver_boot_wake_scene
+from deskbot_server.service.application.chat_flow import run_device_tts_only
+from deskbot_server.service.application.chat_service import ChatService
+from deskbot_server.service.application.doubao_realtime_bridge import DoubaoRealtimeBridge
+from deskbot_server.service.application.interaction_feedback import (
+    schedule_listen_feedback,
+    start_llm_wait_nod_feedback,
+    stop_llm_wait_nod_feedback,
+)
+from deskbot_server.service.application.wake_word import WakeWordGate
+from deskbot_server.service.application.voice_control_intent import try_fast_voice_control
+from deskbot_server.service.application.wake_face_orient import orient_to_recent_face_on_wake
+from deskbot_server.service.application.ws_chat_turn import publish_ws_chat_turn, run_ws_chat_turn
+from deskbot_server.service.asr_service import AsrService
+from deskbot_server.service.camera_face_service import CameraFaceService
+from deskbot_server.service.chat_app_service import ChatAppService
+from deskbot_server.service.pipeline.audio import AudioConfig, ConnectionSession
+from deskbot_server.service.vad_service import VadService
+from deskbot_server.utils.async_helpers import spawn
+from deskbot_server.utils.util import (
+    _format_ts,
+    _json_msg,
+    _ms_between,
+    _new_request_id,
+    _normalize_incoming_pb_ack,
+    format_exc_detail,
+    pcm_to_wav_bytes,
+)
+from deskbot_server.utils.ws_utils import WsUtils
+from deskbot_server.ws.api_key_gate import record_turn_usage
+from deskbot_server.ws.asr_chat_hub import AsrChatHub
+from deskbot_server.ws.device_pipeline import DevicePipelineBroker
+from deskbot_server.ws.registry import DeviceRegistry
+
+logger = logging.getLogger("deskbot-server")
+_WAKE_WORD_GATE = WakeWordGate()
+
+
+async def _feed_rom_uplink(
+    payload: bytes,
+    codec: Optional[str],
+    *,
+    session: ConnectionSession,
+    asr_chat_hub: AsrChatHub,
+    device_id: Optional[str],
+    sample_rate: Optional[int] = None,
+    channels: Optional[int] = None,
+    opus_frames: Optional[int] = None,
+    websocket=None,
+    pipeline: Optional[ChatService] = None,
+    audio_cfg: Optional[AudioConfig] = None,
+    dp_broker: Optional[DevicePipelineBroker] = None,
+    registry: Optional[DeviceRegistry] = None,
+    turn_task_holder: Optional[list] = None,
+    device_pb_only: bool = False,
+    api_key_id: Optional[str] = None,
+) -> None:
+    realtime_bridge = getattr(websocket, "_doubao_realtime_bridge", None) if websocket is not None else None
+    stream_only = bool(realtime_bridge is not None and realtime_bridge.wants_audio)
+    utterance, uplink_started, acoustic_wake = await session.feed_audio(
+        payload,
+        codec,
+        sample_rate=sample_rate,
+        channels=channels,
+        opus_frames=opus_frames,
+        stream_only=stream_only,
+    )
+    if uplink_started:
+        logger.info(
+            "[/asr_chat] 首包 audio device_id=%s payload_bytes=%d codec=%s sr=%s ch=%s",
+            device_id,
+            len(payload),
+            codec,
+            sample_rate,
+            channels,
+        )
+    if stream_only and session.last_pcm_chunk:
+        try:
+            await realtime_bridge.send_audio(session.last_pcm_chunk)
+        except Exception:
+            logger.exception("[Realtime] 上行音频失败，关闭实时会话 device_id=%s", device_id)
+            await realtime_bridge.close()
+        return
+    if utterance and websocket is not None and pipeline is not None and audio_cfg is not None:
+        await _schedule_asr_turn(
+            websocket,
+            pipeline=pipeline,
+            audio_cfg=audio_cfg,
+            session=session,
+            pcm_segment=utterance,
+            device_id=device_id,
+            dp_broker=dp_broker,
+            registry=registry,
+            asr_chat_hub=asr_chat_hub,
+            turn_task_holder=turn_task_holder if turn_task_holder is not None else [],
+            api_key_id=api_key_id,
+            uplink_sample_rate=session.rom_sr,
+            uplink_channels=session.rom_ch,
+            uplink_codec=session.rom_codec,
+            acoustic_wake=str(acoustic_wake or ""),
+        )
+
+
+async def _schedule_asr_turn(
+    websocket,
+    *,
+    pipeline: ChatService,
+    audio_cfg: AudioConfig,
+    session: ConnectionSession,
+    pcm_segment: bytes,
+    device_id: Optional[str],
+    dp_broker: DevicePipelineBroker,
+    registry: DeviceRegistry,
+    asr_chat_hub: AsrChatHub,
+    turn_task_holder: list,
+    api_key_id: Optional[str] = None,
+    uplink_sample_rate: Optional[int] = None,
+    uplink_channels: int = 1,
+    uplink_codec: str = "pcm16",
+    acoustic_wake: str = "",
+) -> None:
+    """``device_pb_only`` 下后台跑一轮，避免阻塞 WS 读循环（否则收不到 ``pb_ack``）。"""
+    prev = turn_task_holder[0] if turn_task_holder else None
+    if prev is not None and not prev.done():
+        logger.info("[/asr_chat] 上一轮未完成，跳过本次触发 device_id=%s", device_id)
+        return
+
+    async def _job() -> None:
+        try:
+            await _run_asr_turn(
+                websocket,
+                pipeline=pipeline,
+                audio_cfg=audio_cfg,
+                session=session,
+                pcm_segment=pcm_segment,
+                device_id=device_id,
+                dp_broker=dp_broker,
+                registry=registry,
+                asr_chat_hub=asr_chat_hub,
+                api_key_id=api_key_id,
+                uplink_sample_rate=uplink_sample_rate,
+                uplink_channels=uplink_channels,
+                uplink_codec=uplink_codec,
+                acoustic_wake=acoustic_wake,
+            )
+        except Exception:
+            logger.exception("[/asr_chat] 后台 ASR 轮次异常 device_id=%s", device_id)
+
+    task = asyncio.create_task(_job())
+    turn_task_holder.clear()
+    turn_task_holder.append(task)
+
+
+async def _ingest_asr_chat_camera_frame(
+    *,
+    payload: bytes,
+    device_id: Optional[str],
+    camera_face_enabled: bool,
+    api_key_id: Optional[str],
+    enc: str = "binary",
+) -> None:
+    """读循环外异步处理：交给 CameraFaceService，不阻塞 WS 继续收帧。"""
+    nbytes = len(payload or b"")
+    if not device_id or not camera_face_enabled:
+        logger.info(
+            "[camera] device_id=%s bytes=%d accepted=false reason=not_configured channel=/asr_chat enc=%s",
+            device_id or "-",
+            nbytes,
+            enc,
+        )
+        return
+    if api_key_id:
+        record_turn_usage(api_key_id, device_id=device_id, face_bytes=nbytes)
+    # 接收结果与识别耗时由 CameraFaceService.process 统一打印
+    await CameraFaceService().process(device_id, payload, frame_source="asr_chat", log_channel="/asr_chat")
+
+
+async def _publish_asr_capture(
+    dp_broker: Optional[DevicePipelineBroker],
+    device_id: Optional[str],
+    *,
+    request_id: str,
+    pcm_segment: bytes,
+    sample_rate: int,
+    asr_text: Optional[str],
+    asr_ms: Optional[float],
+    asr_valid: bool,
+    error: Optional[str] = None,
+    channels: int = 1,
+    codec: str = "pcm16",
+) -> None:
+    """向 device_pipeline 订阅者推送 ASR 收音调试事件（仅调试台订阅时）。"""
+    if not device_id or dp_broker is None or not pcm_segment:
+        return
+    if not await dp_broker.has_subscribers_for_device(device_id):
+        return
+    pcm_bytes = len(pcm_segment)
+    audio_ms = int(pcm_bytes / 2 / max(1, sample_rate) * 1000)
+    wav_b64 = base64.b64encode(pcm_to_wav_bytes(pcm_segment, sample_rate)).decode("ascii")
+    now_ts = time.time()
+    await dp_broker.broadcast_to_device(
+        device_id,
+        {
+            "type": "asr_capture",
+            "event": {
+                "device_id": device_id,
+                "request_id": request_id,
+                "received_ts": now_ts,
+                "received_at": _format_ts(now_ts),
+                "asr_text": asr_text,
+                "asr_valid": asr_valid,
+                "asr_ms": asr_ms,
+                "audio_ms": audio_ms,
+                "pcm_bytes": pcm_bytes,
+                "sample_rate": sample_rate,
+                "channels": channels,
+                "codec": codec,
+                "error": error,
+                "wav_base64": wav_b64,
+            },
+        },
+    )
+
+
+async def _publish_asr_terminal(
+    dp_broker: DevicePipelineBroker,
+    registry: DeviceRegistry,
+    device_id: Optional[str],
+    *,
+    request_id: str,
+    asr_text: Optional[str],
+    asr_ms: Optional[float],
+    t_asr_start: float,
+    t_asr_text: float,
+    status: str,
+    error: str,
+) -> None:
+    """ASR 未进入 LLM 时仍写入流水（空识别、过滤等）。"""
+    if not device_id or dp_broker is None:
+        return
+    await publish_ws_chat_turn(
+        dp_broker,
+        registry,
+        device_id,
+        source="asr",
+        asr_text=asr_text,
+        t_asr_start=t_asr_start,
+        t_asr_text=t_asr_text,
+        flow={"status": status, "error": error, "t_llm_end": t_asr_text, "t_tts_end": t_asr_text},
+        request_id=request_id,
+    )
+
+
+async def _send_mic_open_signal(asr_chat_hub: Optional[AsrChatHub], device_id: Optional[str], *, reason: str) -> None:
+    if not asr_chat_hub or not device_id:
+        return
+    from deskbot_server.pb.mic_signal import build_mic_signal_pb
+
+    payload = build_mic_signal_pb(mic="open")
+    try:
+        n = await asr_chat_hub.send(device_id, payload)
+        logger.info(
+            "[ASR] mic=open pb_single device_id=%s reason=%s delivered=%d req=%s",
+            device_id,
+            reason,
+            n,
+            payload.get("req"),
+        )
+    except Exception:
+        logger.exception("[ASR] mic=open pb_single 下发失败 device_id=%s reason=%s", device_id, reason)
+
+
+async def _run_asr_turn(
+    websocket,
+    *,
+    pipeline: ChatService,
+    audio_cfg: AudioConfig,
+    session: ConnectionSession,
+    pcm_segment: bytes,
+    device_id: Optional[str],
+    dp_broker: DevicePipelineBroker,
+    registry: DeviceRegistry,
+    asr_chat_hub: Optional[AsrChatHub] = None,
+    api_key_id: Optional[str] = None,
+    uplink_sample_rate: Optional[int] = None,
+    uplink_channels: int = 1,
+    uplink_codec: str = "pcm16",
+    acoustic_wake: str = "",
+) -> None:
+    request_id = _new_request_id()
+    sample_rate = uplink_sample_rate or audio_cfg.sample_rate
+    seg_duration_ms = int(len(pcm_segment) / 2 / sample_rate * 1000)
+    t_asr_start = time.monotonic()
+    asr_svc = AsrService()
+    try:
+        text = await asr_svc.transcribe(pcm_segment, sample_rate)
+    except RuntimeError:
+        text = await pipeline.asr(pcm_segment, sample_rate=sample_rate)
+    if api_key_id:
+        record_turn_usage(api_key_id, device_id=device_id, asr_bytes=len(pcm_segment))
+    t_asr_text = time.monotonic()
+    asr_ms = _ms_between(t_asr_start, t_asr_text)
+    if not text and acoustic_wake:
+        text = pipeline.settings.wake_word.word
+        logger.info(
+            "[ASR] empty transcript recovered by acoustic KWS device_id=%s req=%s keyword=%r",
+            device_id,
+            request_id,
+            acoustic_wake,
+        )
+    if not text:
+        logger.info(
+            "[ASR] 结果为空 device_id=%s req=%s audio_ms=%d asr_ms=%s", device_id, request_id, seg_duration_ms, asr_ms
+        )
+        await _publish_asr_capture(
+            dp_broker,
+            device_id,
+            request_id=request_id,
+            pcm_segment=pcm_segment,
+            sample_rate=sample_rate,
+            asr_text=None,
+            asr_ms=asr_ms,
+            asr_valid=False,
+            error="asr_empty",
+            channels=uplink_channels,
+            codec=uplink_codec,
+        )
+        await _publish_asr_terminal(
+            dp_broker,
+            registry,
+            device_id,
+            request_id=request_id,
+            asr_text=None,
+            asr_ms=asr_ms,
+            t_asr_start=t_asr_start,
+            t_asr_text=t_asr_text,
+            status="error",
+            error="asr_empty",
+        )
+        await _send_mic_open_signal(asr_chat_hub, device_id, reason="asr_empty")
+        return
+    try:
+        asr_ok = asr_svc.is_valid_text(text)
+    except RuntimeError:
+        asr_ok = pipeline.is_valid_asr_text(text)
+    if not asr_ok and not acoustic_wake:
+        logger.info(
+            "[ASR] 结果被过滤 device_id=%s req=%s audio_ms=%d asr_ms=%s text=%r",
+            device_id,
+            request_id,
+            seg_duration_ms,
+            asr_ms,
+            text,
+        )
+        await _publish_asr_capture(
+            dp_broker,
+            device_id,
+            request_id=request_id,
+            pcm_segment=pcm_segment,
+            sample_rate=sample_rate,
+            asr_text=text,
+            asr_ms=asr_ms,
+            asr_valid=False,
+            error="asr_filtered",
+            channels=uplink_channels,
+            codec=uplink_codec,
+        )
+        await _publish_asr_terminal(
+            dp_broker,
+            registry,
+            device_id,
+            request_id=request_id,
+            asr_text=text,
+            asr_ms=asr_ms,
+            t_asr_start=t_asr_start,
+            t_asr_text=t_asr_text,
+            status="error",
+            error="asr_filtered",
+        )
+        await _send_mic_open_signal(asr_chat_hub, device_id, reason="asr_filtered")
+        return
+    logger.info(
+        "[ASR] 识别成功 device_id=%s req=%s audio_ms=%d asr_ms=%s text=%r",
+        device_id,
+        request_id,
+        seg_duration_ms,
+        asr_ms,
+        text,
+    )
+    await _publish_asr_capture(
+        dp_broker,
+        device_id,
+        request_id=request_id,
+        pcm_segment=pcm_segment,
+        sample_rate=sample_rate,
+        asr_text=text,
+        asr_ms=asr_ms,
+        asr_valid=True,
+        channels=uplink_channels,
+        codec=uplink_codec,
+    )
+    downlink = WsDownlinkAdapter(websocket, settings=pipeline.settings, device_id=device_id, dp_broker=dp_broker)
+    wake_cfg = pipeline.settings.wake_word
+    if wake_cfg.enabled:
+        decision = _WAKE_WORD_GATE.evaluate(
+            str(device_id or ""),
+            text,
+            word=wake_cfg.word,
+            aliases=wake_cfg.aliases,
+            isolated_aliases=wake_cfg.isolated_aliases,
+            follow_up_window_sec=wake_cfg.follow_up_window_sec,
+            prefix_scan_chars=wake_cfg.prefix_scan_chars,
+            acoustic_wake=acoustic_wake,
+        )
+        if not decision.accepted:
+            logger.info(
+                "[ASR] 未命中唤醒词，忽略本轮 device_id=%s req=%s text=%r wake_word=%r",
+                device_id,
+                request_id,
+                text,
+                wake_cfg.word,
+            )
+            await _publish_asr_terminal(
+                dp_broker,
+                registry,
+                device_id,
+                request_id=request_id,
+                asr_text=text,
+                asr_ms=asr_ms,
+                t_asr_start=t_asr_start,
+                t_asr_text=t_asr_text,
+                status="ignored",
+                error="wake_word_missing",
+            )
+            await _send_mic_open_signal(asr_chat_hub, device_id, reason="wake_word_missing")
+            return
+
+        schedule_listen_feedback(asr_chat_hub, device_id)
+        logger.info(
+            "[ASR] 唤醒通过 device_id=%s req=%s reason=%s alias=%r command=%r",
+            device_id,
+            request_id,
+            decision.reason,
+            decision.matched_alias,
+            decision.command,
+        )
+        try:
+            current_servo = await registry.latest_servo_position(device_id)
+            await orient_to_recent_face_on_wake(
+                asr_chat_hub,
+                device_id,
+                wake_reason=decision.reason,
+                asr_request_id=request_id,
+                current_servo=current_servo,
+            )
+        except Exception:
+            # 看脸是唤醒后的附加反馈，任何视觉/舵机异常都不能阻断主对话。
+            logger.exception("[ASR] 唤醒看脸失败 device_id=%s req=%s", device_id, request_id)
+        if decision.wake_only:
+            await downlink.emit_stage(
+                "asr_done",
+                request_id=request_id,
+                send_client=False,
+                event_fields={"asr_text": text, "asr_ms": asr_ms, "source": "wake_word"},
+            )
+            realtime_bridge = getattr(websocket, "_doubao_realtime_bridge", None)
+            realtime_ack = bool(
+                realtime_bridge is not None
+                and realtime_bridge.enabled
+                and await realtime_bridge.start_with_greeting(wake_cfg.ack_text)
+            )
+            if realtime_ack:
+                ack_flow = {
+                    "status": "realtime",
+                    "provider": "doubao-realtime",
+                    "t_llm_end": time.monotonic(),
+                }
+            else:
+                ack_result = await run_device_tts_only(
+                    downlink,
+                    pipeline,
+                    wake_cfg.ack_text,
+                    request_id=request_id,
+                    device_id=device_id,
+                )
+                ack_flow = ack_result.as_dict()
+            _WAKE_WORD_GATE.touch(
+                str(device_id or ""),
+                wake_cfg.follow_up_window_sec,
+            )
+            await publish_ws_chat_turn(
+                dp_broker,
+                registry,
+                device_id,
+                source="asr",
+                asr_text=text,
+                t_asr_start=t_asr_start,
+                t_asr_text=t_asr_text,
+                flow=ack_flow,
+                request_id=request_id,
+            )
+            await _send_mic_open_signal(asr_chat_hub, device_id, reason="wake_word_ack")
+            return
+        text = decision.command
+    else:
+        schedule_listen_feedback(asr_chat_hub, device_id)
+
+    await downlink.emit_stage(
+        "asr_done",
+        request_id=request_id,
+        send_client=False,
+        event_fields={"asr_text": text, "asr_ms": asr_ms, "source": "asr"},
+    )
+    realtime_bridge = getattr(websocket, "_doubao_realtime_bridge", None)
+    if realtime_bridge is not None and realtime_bridge.enabled:
+        if await realtime_bridge.activate_with_utterance(pcm_segment):
+            if wake_cfg.enabled:
+                _WAKE_WORD_GATE.touch(str(device_id or ""), wake_cfg.follow_up_window_sec)
+            await publish_ws_chat_turn(
+                dp_broker,
+                registry,
+                device_id,
+                source="asr",
+                asr_text=text,
+                t_asr_start=t_asr_start,
+                t_asr_text=t_asr_text,
+                flow={"status": "realtime", "provider": "doubao-realtime", "t_llm_end": t_asr_text},
+                request_id=request_id,
+            )
+            return
+    if asr_chat_hub is not None and device_id:
+        fast = await try_fast_voice_control(text, device_id=device_id, hub=asr_chat_hub)
+        if fast is not None:
+            flow_result = await run_device_tts_only(
+                downlink, pipeline, str(fast["ack"]), request_id=request_id, device_id=device_id
+            )
+            if wake_cfg.enabled:
+                _WAKE_WORD_GATE.touch(
+                    str(device_id or ""),
+                    wake_cfg.follow_up_window_sec,
+                )
+            flow = flow_result.as_dict()
+            flow["fast_control"] = fast["result"]
+            await publish_ws_chat_turn(
+                dp_broker, registry, device_id, source="asr", asr_text=text,
+                t_asr_start=t_asr_start, t_asr_text=t_asr_text, flow=flow, request_id=request_id,
+            )
+            return
+    nod_done: asyncio.Event | None = None
+    nod_task: asyncio.Task | None = None
+    if asr_chat_hub is not None and device_id:
+        nod_done, nod_task = start_llm_wait_nod_feedback(asr_chat_hub, device_id)
+
+    async def _stop_nod_on_llm_error() -> None:
+        """LLM 报错时立即停止点头，再播兜底 TTS，避免同时有点头和摇头。"""
+        nonlocal nod_done, nod_task
+        _done, _task = nod_done, nod_task
+        nod_done, nod_task = None, None
+        if _done is not None:
+            await stop_llm_wait_nod_feedback(_done, _task)
+            logger.info("[ASR] LLM 失败，已停止点头 device_id=%s req=%s", device_id, request_id)
+
+    try:
+        flow = await run_ws_chat_turn(
+            websocket,
+            pipeline,
+            text,
+            request_id=request_id,
+            dp_broker=dp_broker,
+            registry=registry,
+            device_id=device_id,
+            t_asr_start=t_asr_start,
+            t_asr_text=t_asr_text,
+            asr_chat_hub=asr_chat_hub,
+            on_llm_error=_stop_nod_on_llm_error,
+        )
+    except Exception as exc:
+        logger.exception("[ASR] 对话轮次异常 device_id=%s req=%s", device_id, request_id)
+        await publish_ws_chat_turn(
+            dp_broker,
+            registry,
+            device_id,
+            source="asr",
+            asr_text=text,
+            t_asr_start=t_asr_start,
+            t_asr_text=t_asr_text,
+            flow={"status": "error", "error": str(exc), "t_llm_end": t_asr_text, "t_tts_end": t_asr_text},
+            request_id=request_id,
+        )
+        return
+    finally:
+        if nod_done is not None:
+            await stop_llm_wait_nod_feedback(nod_done, nod_task)
+    if wake_cfg.enabled:
+        _WAKE_WORD_GATE.touch(
+            str(device_id or ""),
+            wake_cfg.follow_up_window_sec,
+        )
+    await publish_ws_chat_turn(
+        dp_broker,
+        registry,
+        device_id,
+        source="asr",
+        asr_text=text,
+        t_asr_start=t_asr_start,
+        t_asr_text=t_asr_text,
+        flow=flow,
+        request_id=request_id,
+    )
+    if api_key_id:
+        llm_out = flow.get("llm_raw") or flow.get("llm_text") or ""
+        llm_bytes = len(text.encode("utf-8")) + len(str(llm_out).encode("utf-8"))
+        tts_bytes = len(str(flow.get("llm_text") or "").encode("utf-8")) * 48
+        record_turn_usage(api_key_id, device_id=device_id, llm_bytes=llm_bytes, tts_bytes=tts_bytes)
+
+
+async def _dispatch_rom_flush(
+    websocket,
+    *,
+    pipeline: ChatService,
+    audio_cfg: AudioConfig,
+    session: ConnectionSession,
+    device_id: Optional[str],
+    dp_broker: DevicePipelineBroker,
+    registry: DeviceRegistry,
+    asr_chat_hub: AsrChatHub,
+    device_pb_only: bool,
+    turn_task_holder: list,
+    api_key_id: Optional[str] = None,
+) -> None:
+    realtime_bridge = getattr(websocket, "_doubao_realtime_bridge", None)
+    if realtime_bridge is not None and realtime_bridge.wants_audio:
+        logger.info(
+            "[/asr_chat] realtime device flush ignored; provider VAD owns endpointing device_id=%s",
+            device_id,
+        )
+        return
+    loop = asyncio.get_running_loop()
+    flushed = await loop.run_in_executor(None, session.flush)
+    if flushed is None:
+        logger.info("[/asr_chat] flush 无有效语音段 device_id=%s（Silero 已丢弃静音）", device_id)
+        return
+    duration_ms = int(len(flushed.pcm) / 2 / max(1, flushed.sample_rate) * 1000)
+    logger.info(
+        "[/asr_chat] flush device_id=%s pcm_bytes=%d sr=%d ch=%d codec=%s duration_ms=%d",
+        device_id,
+        len(flushed.pcm),
+        flushed.sample_rate,
+        flushed.channels,
+        flushed.codec,
+        duration_ms,
+    )
+    if device_pb_only:
+        await _schedule_asr_turn(
+            websocket,
+            pipeline=pipeline,
+            audio_cfg=audio_cfg,
+            session=session,
+            pcm_segment=flushed.pcm,
+            device_id=device_id,
+            dp_broker=dp_broker,
+            registry=registry,
+            asr_chat_hub=asr_chat_hub,
+            turn_task_holder=turn_task_holder,
+            api_key_id=api_key_id,
+            uplink_sample_rate=flushed.sample_rate,
+            uplink_channels=flushed.channels,
+            uplink_codec=flushed.codec,
+            acoustic_wake=flushed.acoustic_wake,
+        )
+    else:
+        await _run_asr_turn(
+            websocket,
+            pipeline=pipeline,
+            audio_cfg=audio_cfg,
+            session=session,
+            pcm_segment=flushed.pcm,
+            device_id=device_id,
+            dp_broker=dp_broker,
+            registry=registry,
+            asr_chat_hub=asr_chat_hub,
+            api_key_id=api_key_id,
+            uplink_sample_rate=flushed.sample_rate,
+            uplink_channels=flushed.channels,
+            uplink_codec=flushed.codec,
+            acoustic_wake=flushed.acoustic_wake,
+        )
+
+
+async def handle_asr_chat(
+    websocket,
+    pipeline: ChatService,
+    audio_cfg: AudioConfig,
+    device_id: Optional[str],
+    registry: DeviceRegistry,
+    dp_broker: DevicePipelineBroker,
+    asr_chat_hub: AsrChatHub,
+    *,
+    api_key_id: Optional[str] = None,
+) -> None:
+    """/asr_chat WS：音频/文本上行；可选 ``camera_frame`` + JPEG（``next_bin_len``）。
+
+    相机帧仅服务端入库/调试预览，不因相机结果向本连接回写。
+    """
+    ChatAppService().bind(pipeline)
+    try:
+        session = VadService().create_connection_session(pipeline)
+    except RuntimeError:
+        session = ConnectionSession(pipeline, audio_cfg)
+    peer = WsUtils.peer_str(websocket)
+    pending: Optional[PendingUplinkBinary] = None
+    turn_task_holder: list[asyncio.Task] = []
+    device_pb_only = getattr(pipeline, "asr_chat_device_pb_only", False)
+    camera_face_enabled = bool(device_id and CameraFaceService().is_configured())
+    realtime_bridge = DoubaoRealtimeBridge(
+        pipeline=pipeline,
+        device_id=str(device_id or ""),
+        asr_chat_hub=asr_chat_hub,
+        endpoint_vad_factory=session.create_vad_stream,
+    )
+    setattr(websocket, "_doubao_realtime_bridge", realtime_bridge)
+
+    if device_id:
+        await registry.connect(device_id, "asr_chat", websocket)
+        await asr_chat_hub.attach(device_id, websocket)
+        logger.info("[/asr_chat] 接入 device_id=%s peer=%s (已登记到 DeviceRegistry)", device_id, peer)
+    else:
+        logger.warning(
+            "[/asr_chat] 接入缺失 device_id peer=%s —— 不会出现在 /api/devices 设备列表，"
+            "请改用 ws://host:9000/asr_chat?device_id=<设备ID>",
+            peer,
+        )
+    try:
+        ready_ok = await WsUtils.safe_send(
+            websocket, pack_ws_downlink_frame(_json_msg({"type": "ready", "device_id": device_id}))
+        )
+        logger.info(
+            "[/asr_chat] ready device_id=%s peer=%s sent=%s",
+            device_id,
+            peer,
+            ready_ok,
+        )
+        if not ready_ok:
+            return
+        if device_id:
+            await deliver_boot_wake_scene(asr_chat_hub, device_id)
+
+        async for message in websocket:
+            attached_media: Optional[bytes] = None
+            try:
+                # --- 等待中的 binary（上一帧 JSON 已声明 next_bin_len）---
+                if pending is not None:
+                    if not isinstance(message, (bytes, bytearray)):
+                        logger.warning(
+                            "[/asr_chat] device_id=%s 预期 %d 字节 binary，收到 JSON，丢弃", device_id, pending.length
+                        )
+                        pending = None
+                        continue
+                    payload = bytes(message)
+                    if len(payload) != pending.length:
+                        logger.warning(
+                            "[/asr_chat] device_id=%s binary 长度不符 expected=%d got=%d kind=%s",
+                            device_id,
+                            pending.length,
+                            len(payload),
+                            pending.kind,
+                        )
+                        pending = None
+                        continue
+                    kind = pending.kind
+                    codec = pending.codec
+                    uplink_sr = pending.sample_rate
+                    uplink_ch = pending.channels
+                    uplink_frames = pending.opus_frames
+                    uplink_flush = pending.flush
+                    pending = None
+
+                    if kind == "camera_frame":
+                        spawn(
+                            _ingest_asr_chat_camera_frame(
+                                payload=payload,
+                                device_id=device_id,
+                                camera_face_enabled=camera_face_enabled,
+                                api_key_id=api_key_id,
+                                enc="binary",
+                            ),
+                            name=f"asr_chat_camera:{device_id or '?'}",
+                        )
+                        continue
+
+                    await _feed_rom_uplink(
+                        payload,
+                        codec,
+                        session=session,
+                        asr_chat_hub=asr_chat_hub,
+                        device_id=device_id,
+                        sample_rate=uplink_sr,
+                        channels=uplink_ch,
+                        opus_frames=uplink_frames,
+                        websocket=websocket,
+                        pipeline=pipeline,
+                        audio_cfg=audio_cfg,
+                        dp_broker=dp_broker,
+                        registry=registry,
+                        turn_task_holder=turn_task_holder,
+                        device_pb_only=device_pb_only,
+                        api_key_id=api_key_id,
+                    )
+                    if uplink_flush:
+                        await _dispatch_rom_flush(
+                            websocket,
+                            pipeline=pipeline,
+                            audio_cfg=audio_cfg,
+                            session=session,
+                            device_id=device_id,
+                            dp_broker=dp_broker,
+                            registry=registry,
+                            asr_chat_hub=asr_chat_hub,
+                            device_pb_only=device_pb_only,
+                            turn_task_holder=turn_task_holder,
+                            api_key_id=api_key_id,
+                        )
+                    continue
+
+                # --- binary：新固件打包帧，或旧固件裸 audio ---
+                if isinstance(message, (bytes, bytearray)):
+                    payload = bytes(message)
+                    frame = parse_packed_frame(payload)
+                    if frame is not None:
+                        data = frame.doc
+                        attached_media = frame.bin
+                    else:
+                        await _feed_rom_uplink(
+                            payload,
+                            None,
+                            session=session,
+                            asr_chat_hub=asr_chat_hub,
+                            device_id=device_id,
+                            websocket=websocket,
+                            pipeline=pipeline,
+                            audio_cfg=audio_cfg,
+                            dp_broker=dp_broker,
+                            registry=registry,
+                            turn_task_holder=turn_task_holder,
+                            device_pb_only=device_pb_only,
+                            api_key_id=api_key_id,
+                        )
+                        continue
+                else:
+                    data = json.loads(message)
+                msg_type = data.get("type")
+
+                if msg_type == "boot_connect":
+                    if device_id:
+                        await deliver_boot_wake_scene(asr_chat_hub, device_id)
+                    continue
+
+                if msg_type == "pb_ack":
+                    norm = _normalize_incoming_pb_ack(data)
+                    if norm is not None and device_id:
+                        await registry.record_pb_ack(device_id, norm)
+                        realtime_bridge.record_pb_ack(norm)
+                        logger.info(
+                            "[pb_ack] device_id=%s req=%r idx=%s audio_buf_ms=%s servo=%s",
+                            device_id,
+                            norm.get("req"),
+                            norm.get("idx"),
+                            norm.get("audio_buf_ms"),
+                            norm.get("servo"),
+                        )
+                        if dp_broker is not None:
+                            now_ts = time.time()
+                            await dp_broker.broadcast_to_device(
+                                device_id,
+                                {
+                                    "type": "pipeline_stage",
+                                    "event": {
+                                        "device_id": device_id,
+                                        "request_id": None,
+                                        "stage": "pb_ack",
+                                        "ack": norm,
+                                        "ts": now_ts,
+                                        "t_mono": time.monotonic(),
+                                        "received_at": _format_ts(now_ts),
+                                    },
+                                },
+                            )
+                    elif norm is not None and not device_id:
+                        logger.info("[pb_ack] 已解析但连接无 device_id，未入库 peer=%s", peer)
+                    continue
+
+                if msg_type == "user_text":
+                    ut = (data.get("text") or "").strip()
+                    try:
+                        text_ok = bool(ut) and AsrService().is_valid_text(ut)
+                    except RuntimeError:
+                        text_ok = bool(ut) and pipeline.is_valid_asr_text(ut)
+                    if not text_ok:
+                        continue
+                    request_id = _new_request_id()
+                    t_asr_start = time.monotonic()
+                    t_asr_text = time.monotonic()
+                    text_downlink = WsDownlinkAdapter(
+                        websocket, settings=pipeline.settings, device_id=device_id, dp_broker=dp_broker
+                    )
+                    await text_downlink.emit_stage(
+                        "asr_done",
+                        request_id=request_id,
+                        send_client=False,
+                        event_fields={"asr_text": ut, "asr_ms": 0, "source": "text"},
+                    )
+                    nod_done, nod_task = start_llm_wait_nod_feedback(asr_chat_hub, device_id)
+                    try:
+                        flow = await run_ws_chat_turn(
+                            websocket,
+                            pipeline,
+                            ut,
+                            request_id=request_id,
+                            dp_broker=dp_broker,
+                            registry=registry,
+                            device_id=device_id,
+                            t_asr_start=t_asr_start,
+                            t_asr_text=t_asr_text,
+                        )
+                    finally:
+                        await stop_llm_wait_nod_feedback(nod_done, nod_task)
+                    await publish_ws_chat_turn(
+                        dp_broker,
+                        registry,
+                        device_id,
+                        source="text",
+                        asr_text=ut,
+                        t_asr_start=t_asr_start,
+                        t_asr_text=t_asr_text,
+                        flow=flow,
+                        request_id=request_id,
+                    )
+                    continue
+
+                if msg_type == "flush":
+                    # 兼容旧固件独立 type=flush；新固件用 audio.flush=1。
+                    await _dispatch_rom_flush(
+                        websocket,
+                        pipeline=pipeline,
+                        audio_cfg=audio_cfg,
+                        session=session,
+                        device_id=device_id,
+                        dp_broker=dp_broker,
+                        registry=registry,
+                        asr_chat_hub=asr_chat_hub,
+                        device_pb_only=device_pb_only,
+                        turn_task_holder=turn_task_holder,
+                        api_key_id=api_key_id,
+                    )
+                    continue
+
+                if msg_type == "audio_cancel":
+                    session.cancel_rom_uplink()
+                    await realtime_bridge.cancel_response()
+                    continue
+
+                if msg_type == "camera_frame":
+                    raw_b64 = data.get("data")
+                    if raw_b64:
+                        try:
+                            payload = base64.b64decode(raw_b64)
+                        except Exception:
+                            logger.warning("[/asr_chat] camera_frame base64 解码失败 device_id=%s", device_id)
+                            continue
+                        spawn(
+                            _ingest_asr_chat_camera_frame(
+                                payload=payload,
+                                device_id=device_id,
+                                camera_face_enabled=camera_face_enabled,
+                                api_key_id=api_key_id,
+                                enc="base64",
+                            ),
+                            name=f"asr_chat_camera:{device_id or '?'}",
+                        )
+                        continue
+                    nbl = coerce_next_bin_len(data)
+                    if nbl > 0:
+                        if attached_media is not None:
+                            if len(attached_media) != nbl:
+                                logger.warning(
+                                    "[/asr_chat] device_id=%s packed camera binary 长度不符 expected=%d got=%d",
+                                    device_id,
+                                    nbl,
+                                    len(attached_media),
+                                )
+                                continue
+                            spawn(
+                                _ingest_asr_chat_camera_frame(
+                                    payload=attached_media,
+                                    device_id=device_id,
+                                    camera_face_enabled=camera_face_enabled,
+                                    api_key_id=api_key_id,
+                                    enc="binary",
+                                ),
+                                name=f"asr_chat_camera:{device_id or '?'}",
+                            )
+                            continue
+                        if pending is not None:
+                            logger.warning(
+                                "[/asr_chat] camera_frame 覆盖未完成的 pending device_id=%s old_len=%d new_len=%d",
+                                device_id,
+                                pending.length,
+                                nbl,
+                            )
+                        pending = PendingUplinkBinary(kind="camera_frame", length=nbl)
+                        continue
+                    logger.warning("[/asr_chat] camera_frame 缺少 next_bin_len device_id=%s", device_id)
+                    continue
+
+                if msg_type == "audio":
+                    nbl = coerce_next_bin_len(data)
+                    want_flush = coerce_audio_flush(data)
+                    if nbl > 0:
+                        sr_raw = data.get("sr")
+                        ch_raw = data.get("ch")
+                        try:
+                            uplink_sr = int(sr_raw) if sr_raw is not None else audio_cfg.sample_rate
+                        except (TypeError, ValueError):
+                            uplink_sr = audio_cfg.sample_rate
+                        try:
+                            uplink_ch = int(ch_raw) if ch_raw is not None else audio_cfg.channels
+                        except (TypeError, ValueError):
+                            uplink_ch = audio_cfg.channels
+                        codec = data.get("codec")
+                        uplink_frames = coerce_opus_frames(data)
+                        if attached_media is not None:
+                            if len(attached_media) != nbl:
+                                logger.warning(
+                                    "[/asr_chat] device_id=%s packed audio binary 长度不符 expected=%d got=%d",
+                                    device_id,
+                                    nbl,
+                                    len(attached_media),
+                                )
+                                continue
+                            await _feed_rom_uplink(
+                                attached_media,
+                                codec,
+                                session=session,
+                                asr_chat_hub=asr_chat_hub,
+                                device_id=device_id,
+                                sample_rate=uplink_sr,
+                                channels=uplink_ch,
+                                opus_frames=uplink_frames,
+                                websocket=websocket,
+                                pipeline=pipeline,
+                                audio_cfg=audio_cfg,
+                                dp_broker=dp_broker,
+                                registry=registry,
+                                turn_task_holder=turn_task_holder,
+                                device_pb_only=device_pb_only,
+                                api_key_id=api_key_id,
+                            )
+                            if want_flush:
+                                await _dispatch_rom_flush(
+                                    websocket,
+                                    pipeline=pipeline,
+                                    audio_cfg=audio_cfg,
+                                    session=session,
+                                    device_id=device_id,
+                                    dp_broker=dp_broker,
+                                    registry=registry,
+                                    asr_chat_hub=asr_chat_hub,
+                                    device_pb_only=device_pb_only,
+                                    turn_task_holder=turn_task_holder,
+                                    api_key_id=api_key_id,
+                                )
+                            continue
+                        pending = PendingUplinkBinary(
+                            kind="audio",
+                            length=nbl,
+                            codec=codec,
+                            sample_rate=uplink_sr,
+                            channels=uplink_ch,
+                            opus_frames=uplink_frames,
+                            flush=want_flush,
+                        )
+                        continue
+                    raw_b64 = data.get("data")
+                    if raw_b64:
+                        payload = base64.b64decode(raw_b64)
+                        codec = data.get("codec")
+                        sr_raw = data.get("sr")
+                        ch_raw = data.get("ch")
+                        try:
+                            uplink_sr = int(sr_raw) if sr_raw is not None else None
+                        except (TypeError, ValueError):
+                            uplink_sr = None
+                        try:
+                            uplink_ch = int(ch_raw) if ch_raw is not None else None
+                        except (TypeError, ValueError):
+                            uplink_ch = None
+                        await _feed_rom_uplink(
+                            payload,
+                            codec,
+                            session=session,
+                            asr_chat_hub=asr_chat_hub,
+                            device_id=device_id,
+                            sample_rate=uplink_sr,
+                            channels=uplink_ch,
+                            websocket=websocket,
+                            pipeline=pipeline,
+                            audio_cfg=audio_cfg,
+                            dp_broker=dp_broker,
+                            registry=registry,
+                            turn_task_holder=turn_task_holder,
+                            device_pb_only=device_pb_only,
+                            api_key_id=api_key_id,
+                        )
+                    if want_flush:
+                        await _dispatch_rom_flush(
+                            websocket,
+                            pipeline=pipeline,
+                            audio_cfg=audio_cfg,
+                            session=session,
+                            device_id=device_id,
+                            dp_broker=dp_broker,
+                            registry=registry,
+                            asr_chat_hub=asr_chat_hub,
+                            device_pb_only=device_pb_only,
+                            turn_task_holder=turn_task_holder,
+                            api_key_id=api_key_id,
+                        )
+                    continue
+
+            except Exception as exc:
+                logger.exception("处理客户端消息失败: %s", format_exc_detail(exc))
+    except ConnectionClosed as closed:
+        logger.info("WebSocket 已关闭: %s", closed)
+    finally:
+        await realtime_bridge.close()
+        try:
+            delattr(websocket, "_doubao_realtime_bridge")
+        except AttributeError:
+            pass
+        if device_id:
+            await asr_chat_hub.detach(device_id, websocket)
+            await registry.disconnect(websocket)

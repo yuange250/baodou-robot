@@ -1,0 +1,95 @@
+{
+  "revision": "0.1",
+  "units": "mm",
+  "n3_assumptions": {
+    "complete_width": 160.0,
+    "complete_depth": 150.0,
+    "complete_height": 65.0,
+    "wheel_diameter": 50.0,
+    "controller_hole_x": 58.0,
+    "controller_hole_y": 49.0,
+    "acrylic_thickness": 3.0,
+    "deck_spacing": 30.0,
+    "wheel_center_radius": 57.0,
+    "wheel_tangent_clearance": 59.0,
+    "wheel_radial_clearance": 37.0,
+    "mounting_slot_length": 7.0,
+    "mounting_slot_width": 3.6
+  },
+  "brufik_assumptions": {
+    "base_recess_x": 54.0,
+    "base_recess_y": 49.0,
+    "cradle_x": 74.0,
+    "cradle_y": 66.0
+  },
+  "parts": {
+    "N3_upper_cowl_v0_1": {
+      "size_mm": [
+        132.904,
+        121.534,
+        18.017
+      ],
+      "min_mm": [
+        -66.452,
+        -48.517,
+        -0.0
+      ],
+      "max_mm": [
+        66.452,
+        73.017,
+        18.017
+      ]
+    },
+    "Brufik_to_N3_adapter_v0_1": {
+      "size_mm": [
+        74.01,
+        66.01,
+        8.011
+      ],
+      "min_mm": [
+        -37.005,
+        -33.005,
+        -0.006
+      ],
+      "max_mm": [
+        37.005,
+        33.005,
+        8.006
+      ]
+    },
+    "N3_58x49_fit_jig_v0_1": {
+      "size_mm": [
+        68.004,
+        59.004,
+        1.609
+      ],
+      "min_mm": [
+        -34.002,
+        -29.502,
+        -0.004
+      ],
+      "max_mm": [
+        34.002,
+        29.502,
+        1.604
+      ]
+    },
+    "Head_touch_electrode_holder_v0_1": {
+      "size_mm": [
+        32.006,
+        24.006,
+        1.606
+      ],
+      "min_mm": [
+        -16.003,
+        -12.003,
+        -0.003
+      ],
+      "max_mm": [
+        16.003,
+        12.003,
+        1.603
+      ]
+    }
+  }
+}

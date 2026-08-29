@@ -1,0 +1,28 @@
+Drill report for BrufikMobileBase.kicad_pcb
+Created on 2026-08-06T22:40:01
+
+Copper Layer Stackup:
+    =============================================================
+    L1 :  F.Cu                      front
+    L2 :  In1.Cu                    in1
+    L3 :  In2.Cu                    in2
+    L4 :  B.Cu                      back
+
+
+Drill file 'BrufikMobileBase-PTH.drl' contains
+    plated through holes:
+    =============================================================
+    T1  0.300mm  0.0118"  (52 holes))
+    T2  0.450mm  0.0177"  (1 hole)
+    T3  1.000mm  0.0394"  (33 holes))
+    T4  1.200mm  0.0472"  (2 holes))
+
+    Total plated holes count 88
+
+
+Drill file 'BrufikMobileBase-NPTH.drl' contains
+    unplated through holes:
+    =============================================================
+    T1  3.600mm  0.1417"  (4 holes))
+
+    Total unplated holes count 4
