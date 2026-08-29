@@ -2,6 +2,8 @@
 
 Monorepo combining **Brufik hardware/firmware** and **opendesk-service backend**.
 
+> The current Baodou robot runs the ESP32-to-Doubao Realtime direct firmware. See the Chinese [`firmware development and flashing guide`](docs/firmware-development-and-flashing.md) for the source map, local setup, Windows flashing, logs, smoke tests, and Coding Agent handoff notes.
+
 | Directory | Description |
 |-----------|-------------|
 | [`hardware/`](hardware/) | ESP32S3 firmware, mechanical assets, PCB rebuild files, flash scripts |
@@ -36,6 +38,9 @@ See [`hardware/README.md`](hardware/README.md) and [`hardware/README_zh.md`](har
 
 For direct Realtime firmware, local credentials, Windows flashing, and safe GitHub publishing, see
 [`docs/local-config-and-github.md`](docs/local-config-and-github.md).
+
+For the current firmware architecture and complete edit/build/flash workflow, see
+[`docs/firmware-development-and-flashing.md`](docs/firmware-development-and-flashing.md).
 
 ## License
 

@@ -22,6 +22,8 @@
 
 **需要：** USB、[PlatformIO](https://platformio.org/)，串口 `dialout` 权限。
 
+当前包逗实机使用 ESP32 直连豆包 Realtime 版本。Windows 下应优先使用 `scripts/build_direct.ps1` 注入本地 Realtime/Ark 凭证；完整修改、烧录、日志和冒烟测试流程见 [`../docs/firmware-development-and-flashing.md`](../docs/firmware-development-and-flashing.md)。
+
 烧录前从示例复制并编辑被忽略的 `firmware/deskbot_local_config.h`：`WIFI_DEFAULT_*`、`DESKBOT_WS_HOST`、`DESKBOT_WS_PORT`。
 
 ```bash
@@ -73,8 +75,8 @@ cd open-deskbot-hardware
 | 外设 | 信号 | 接 XIAO 焊盘 | 备注 |
 |------|------|--------------|------|
 | **LCD** | MOSI / SCK / CS / DC | **D10 / D8 / D1 / D2** | SPI |
-| **舵机 左右 (X)** | PWM | **D7** | 小 2g 舵机 |
-| **舵机 上下 (Y)** | PWM | **D6** | 大舵机 |
+| **舵机 左右 (X)** | PWM | **D9 / GPIO8** | 小 2g 舵机；当前固件含 2:1 增益与工具层镜像 |
+| **舵机 上下 (Y)** | PWM | **D3 / GPIO4** | 大舵机；数值减小为抬头 |
 | **MAX98357** | DIN / BCLK / LRC | **D0 / D5 / D4** | I2S → 2011 喇叭 |
 | **麦克风** | PDM | **板载**（ESP32S3 Sense 主板上） | 无需外接 INMP441 |
 | **舵机电源** | 5V / GND | 独立 5V≥1A | 与逻辑共地 |

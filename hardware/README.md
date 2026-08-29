@@ -20,6 +20,8 @@
 
 ## 2. Developers
 
+The current Baodou unit uses the ESP32-to-Doubao Realtime direct firmware. On Windows, use `scripts/build_direct.ps1` so the ignored local Realtime/Ark credentials are injected at build time. See the Chinese [`firmware development and flashing guide`](../docs/firmware-development-and-flashing.md) for the complete workflow.
+
 Create the ignored `firmware/deskbot_local_config.h` from its example, then:
 
 ```bash
@@ -59,8 +61,8 @@ Optional debug: `http://<device-ip>/` for a local camera page.
 | Device | Signals | XIAO pads |
 |--------|---------|-----------|
 | LCD SPI | MOSI/CLK/CS/DC | D10 / D8 / D1 / D2 |
-| Servo X (pan) | PWM | **D7** (2g) |
-| Servo Y (tilt) | PWM | **D6** (large) |
+| Servo X (pan) | PWM | **D9 / GPIO8** (2g; firmware applies 2:1 gain and tool-layer mirroring) |
+| Servo Y (tilt) | PWM | **D3 / GPIO4** (large; lower logical values tilt upward) |
 | MAX98357 | DIN/BCLK/LRC | D0 / D5 / D4 → 2011 speaker |
 | Mic | PDM | **Onboard** (ESP32S3 Sense) |
 

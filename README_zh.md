@@ -2,6 +2,8 @@
 
 本仓库合并了 **Brufik 硬件/固件** 与 **opendesk-service 语音后台**。
 
+> 当前“包逗”实机运行 ESP32 直连豆包 Realtime 版本。修改代码、配置本地凭证、识别串口、执行烧录以及供后续 Coding Agent 接手的说明，见 [`docs/firmware-development-and-flashing.md`](docs/firmware-development-and-flashing.md)。
+
 | 目录 | 说明 |
 |------|------|
 | [`hardware/`](hardware/) | ESP32S3 固件、机械结构、PCB 重建文件、烧录脚本 |
@@ -36,6 +38,9 @@ cd hardware
 
 直连实时版、本地密钥、Windows 刷写及 GitHub 安全发布见
 [`docs/local-config-and-github.md`](docs/local-config-and-github.md)。
+
+固件代码地图、实机参数、编译烧录、日志判断和冒烟测试见
+[`docs/firmware-development-and-flashing.md`](docs/firmware-development-and-flashing.md)。
 
 ## 许可证
 
